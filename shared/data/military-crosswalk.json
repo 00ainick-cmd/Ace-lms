@@ -1,0 +1,132 @@
+{
+  "Air Force": {
+    "2A373": {
+      "title": "Avionics Systems Journeyman",
+      "likely_strong": ["mod2-basic-electrical", "mod3-cns-systems", "mod7-tools-test-equipment"],
+      "likely_weak": ["mod1-maintenance-regs", "mod5-digital-databus"],
+      "note": "Strong electrical and CNS fundamentals from flightline experience. May need to brush up on FARs/documentation and digital databus theory."
+    },
+    "2A333": {
+      "title": "Tactical Aircraft Avionics Journeyman",
+      "likely_strong": ["mod2-basic-electrical", "mod3-cns-systems", "mod6-aircraft-wiring"],
+      "likely_weak": ["mod1-maintenance-regs", "mod4-flight-instruments"],
+      "note": "Excellent hands-on avionics and wiring experience. Focus on civilian maintenance regulations and general aviation instruments that differ from tactical systems."
+    },
+    "2A273": {
+      "title": "Comm/Nav/Mission Systems Journeyman",
+      "likely_strong": ["mod3-cns-systems", "mod5-digital-databus", "mod7-tools-test-equipment"],
+      "likely_weak": ["mod1-maintenance-regs", "mod6-aircraft-wiring"],
+      "note": "Deep CNS and databus expertise from mission systems work. May need to review civilian Part 43/145 regulations and physical wiring practices."
+    },
+    "2P031": {
+      "title": "Precision Measurement Equipment Lab Technician",
+      "likely_strong": ["mod7-tools-test-equipment", "mod2-basic-electrical", "mod8-shop-safety"],
+      "likely_weak": ["mod3-cns-systems", "mod5-digital-databus"],
+      "note": "Expert-level test equipment and calibration knowledge. Will need to build domain knowledge in avionics-specific systems like CNS and databus protocols."
+    },
+    "2A631": {
+      "title": "Aircraft Electrical & Environmental Systems",
+      "likely_strong": ["mod2-basic-electrical", "mod6-aircraft-wiring", "mod8-shop-safety"],
+      "likely_weak": ["mod3-cns-systems", "mod5-digital-databus"],
+      "note": "Solid electrical theory and wiring fundamentals. Focus on avionics-specific systems like navigation and digital communications."
+    }
+  },
+  "Army": {
+    "94D": {
+      "title": "Air Traffic Control Equipment Repairer",
+      "likely_strong": ["mod3-cns-systems", "mod2-basic-electrical", "mod7-tools-test-equipment"],
+      "likely_weak": ["mod1-maintenance-regs", "mod4-flight-instruments"],
+      "note": "Strong CNS and radio fundamentals from ATC systems. Will need to learn FAA civilian regulations and aircraft-specific flight instruments."
+    },
+    "94F": {
+      "title": "Computer/Detection Systems Repairer",
+      "likely_strong": ["mod5-digital-databus", "mod2-basic-electrical", "mod7-tools-test-equipment"],
+      "likely_weak": ["mod1-maintenance-regs", "mod3-cns-systems"],
+      "note": "Excellent digital systems and troubleshooting skills. Focus on FAA regulations and avionics-specific CNS equipment."
+    },
+    "94H": {
+      "title": "Test, Measurement & Diagnostic Equipment Maintenance",
+      "likely_strong": ["mod7-tools-test-equipment", "mod2-basic-electrical", "mod8-shop-safety"],
+      "likely_weak": ["mod3-cns-systems", "mod5-digital-databus"],
+      "note": "Expert-level TMDE and calibration experience. Build domain knowledge in avionics systems and digital protocols."
+    },
+    "94E": {
+      "title": "Radio and Communications Security Repairer",
+      "likely_strong": ["mod3-cns-systems", "mod2-basic-electrical", "mod6-aircraft-wiring"],
+      "likely_weak": ["mod1-maintenance-regs", "mod4-flight-instruments"],
+      "note": "Strong radio and communications background. Focus on civilian aviation regulations and instrument systems."
+    },
+    "15D": {
+      "title": "Aircraft Powertrain Repairer (Aviation)",
+      "likely_strong": ["mod2-basic-electrical", "mod8-shop-safety", "mod7-tools-test-equipment"],
+      "likely_weak": ["mod3-cns-systems", "mod5-digital-databus"],
+      "note": "Good electrical fundamentals from aviation work. Will need to learn avionics-specific systems and digital protocols."
+    }
+  },
+  "Navy": {
+    "AT": {
+      "title": "Aviation Electronics Technician",
+      "likely_strong": ["mod2-basic-electrical", "mod3-cns-systems", "mod4-flight-instruments", "mod7-tools-test-equipment"],
+      "likely_weak": ["mod1-maintenance-regs"],
+      "note": "Comprehensive avionics background covering most technical domains. Primary focus should be FAA civilian regulations and Part 145 documentation requirements."
+    },
+    "AE": {
+      "title": "Aviation Electrician's Mate",
+      "likely_strong": ["mod2-basic-electrical", "mod6-aircraft-wiring", "mod8-shop-safety"],
+      "likely_weak": ["mod3-cns-systems", "mod5-digital-databus"],
+      "note": "Strong electrical theory and wiring practices. Build knowledge in avionics systems like CNS and digital databus protocols."
+    },
+    "ET": {
+      "title": "Electronics Technician",
+      "likely_strong": ["mod2-basic-electrical", "mod5-digital-databus", "mod7-tools-test-equipment"],
+      "likely_weak": ["mod1-maintenance-regs", "mod3-cns-systems"],
+      "note": "Solid electronics and digital systems foundation. Focus on FAA regulations and aviation-specific CNS equipment."
+    },
+    "AV": {
+      "title": "Avionics Technician",
+      "likely_strong": ["mod2-basic-electrical", "mod3-cns-systems", "mod6-aircraft-wiring", "mod7-tools-test-equipment"],
+      "likely_weak": ["mod1-maintenance-regs"],
+      "note": "Well-rounded avionics experience across multiple domains. Main gap will be civilian FAA Part 43/145 regulations and documentation."
+    }
+  },
+  "Marines": {
+    "6323": {
+      "title": "Avionics Technician",
+      "likely_strong": ["mod2-basic-electrical", "mod3-cns-systems", "mod6-aircraft-wiring", "mod7-tools-test-equipment"],
+      "likely_weak": ["mod1-maintenance-regs"],
+      "note": "Strong across-the-board avionics background. Primary study focus should be civilian FAA regulations and Part 145 repair station requirements."
+    },
+    "5953": {
+      "title": "Crypto Equipment Technician",
+      "likely_strong": ["mod5-digital-databus", "mod2-basic-electrical", "mod7-tools-test-equipment"],
+      "likely_weak": ["mod1-maintenance-regs", "mod3-cns-systems"],
+      "note": "Excellent digital systems and security equipment experience. Will need to build knowledge in FAA regulations and avionics CNS systems."
+    },
+    "6314": {
+      "title": "Unmanned Aircraft Systems Avionics Technician",
+      "likely_strong": ["mod2-basic-electrical", "mod5-digital-databus", "mod3-cns-systems"],
+      "likely_weak": ["mod1-maintenance-regs", "mod4-flight-instruments"],
+      "note": "Modern databus and CNS experience from UAS platforms. Focus on civilian regulations and traditional manned aircraft flight instruments."
+    },
+    "6313": {
+      "title": "Aircraft Communications/Navigation/Electrical Systems Technician",
+      "likely_strong": ["mod3-cns-systems", "mod2-basic-electrical", "mod6-aircraft-wiring"],
+      "likely_weak": ["mod1-maintenance-regs", "mod5-digital-databus"],
+      "note": "Strong CNS and electrical systems background. Focus on FAA Part 145 regulations and modern digital databus protocols."
+    }
+  },
+  "Coast Guard": {
+    "AMT": {
+      "title": "Aviation Maintenance Technician",
+      "likely_strong": ["mod2-basic-electrical", "mod3-cns-systems", "mod8-shop-safety"],
+      "likely_weak": ["mod5-digital-databus"],
+      "note": "Broad aviation maintenance background including avionics. Modern digital databus systems will be the primary learning area."
+    },
+    "ET": {
+      "title": "Electronics Technician",
+      "likely_strong": ["mod2-basic-electrical", "mod3-cns-systems", "mod7-tools-test-equipment"],
+      "likely_weak": ["mod1-maintenance-regs", "mod6-aircraft-wiring"],
+      "note": "Strong electronics and communications foundation. Focus on FAA regulations and aircraft-specific wiring standards."
+    }
+  }
+}

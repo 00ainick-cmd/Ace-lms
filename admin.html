@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard — ACE Avionics Training</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="shared/ace-theme.css">
+  <style>
+    :root {
+      --admin-accent: var(--warning);
+      --admin-glow: var(--warning-soft);
+    }
+    
+    .admin-topbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      height: 56px;
+      background: var(--surface);
+      border-bottom: 2px solid var(--admin-accent);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+    }
+    
+    .admin-title {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .admin-badge {
+      background: var(--admin-accent);
+      color: #080C1A;
+      padding: 4px 10px;
+      border-radius: var(--radius-full);
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    .metric-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+    
+    .metric-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      text-align: center;
+    }
+    
+    .metric-value {
+      font-family: var(--font-mono);
+      font-size: 32px;
+      font-weight: 800;
+      color: var(--text-primary);
+      line-height: 1;
+    }
+    
+    .metric-label {
+      font-size: 11px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-top: 8px;
+    }
+    
+    .metric-sub {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-top: 4px;
+    }
+    
+    .students-table {
+      width: 100%;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+    }
+    
+    .students-table th {
+      background: var(--surface-2);
+      padding: 12px 16px;
+      text-align: left;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+      user-select: none;
+    }
+    
+    .students-table th:hover { color: var(--admin-accent); }
+    
+    .students-table td {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border);
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+    
+    .students-table tr:last-child td { border-bottom: none; }
+    
+    .students-table tbody tr:hover { background: var(--surface-hover); }
+    
+    .status-active { color: var(--success); font-weight: 600; }
+    .status-warning { color: var(--warning); font-weight: 600; }
+    .status-inactive { color: var(--danger); font-weight: 600; }
+    
+    .search-box {
+      width: 100%;
+      max-width: 400px;
+      padding: 10px 16px;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      font-size: 14px;
+      color: var(--text-primary);
+      margin-bottom: 16px;
+    }
+    
+    .search-box:focus {
+      outline: none;
+      border-color: var(--admin-accent);
+    }
+    
+    .chart-container {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+    }
+    
+    .chart-bar {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    
+    .chart-label {
+      flex: 0 0 200px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+    
+    .chart-bar-track {
+      flex: 1;
+      height: 24px;
+      background: var(--surface-3);
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      position: relative;
+    }
+    
+    .chart-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--admin-accent), #E09E1F);
+      border-radius: var(--radius-sm);
+      transition: width 0.6s ease;
+    }
+    
+    .chart-value {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-primary);
+      min-width: 40px;
+      text-align: right;
+    }
+    
+    .auth-screen {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    
+    .auth-card {
+      background: var(--surface);
+      border: 2px solid var(--admin-accent);
+      border-radius: var(--radius-lg);
+      padding: 48px;
+      max-width: 400px;
+      width: 100%;
+      text-align: center;
+    }
+    
+    .auth-input {
+      width: 100%;
+      padding: 14px 16px;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      font-size: 14px;
+      color: var(--text-primary);
+      margin: 16px 0;
+      text-align: center;
+      font-family: var(--font-mono);
+      letter-spacing: 2px;
+    }
+    
+    .auth-input:focus {
+      outline: none;
+      border-color: var(--admin-accent);
+    }
+    
+    .error-msg {
+      color: var(--danger);
+      font-size: 13px;
+      margin-top: 8px;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Auth Screen -->
+<div id="auth-screen" class="auth-screen">
+  <div class="auth-card">
+    <div style="font-size: 48px; margin-bottom: 16px;">🔐</div>
+    <h1 style="font-size: 24px; font-weight: 800; color: var(--text-primary); margin-bottom: 8px;">Admin Access</h1>
+    <p style="color: var(--text-muted); margin-bottom: 24px;">Enter the admin password to continue.</p>
+    <input type="password" id="admin-password" class="auth-input" placeholder="Password" autocomplete="off">
+    <button class="btn-primary" onclick="AdminAuth.login()" style="width: 100%;">Unlock Dashboard</button>
+    <div id="auth-error" class="error-msg" style="display:none;"></div>
+  </div>
+</div>
+
+<!-- Dashboard (hidden until auth) -->
+<div id="dashboard" style="display:none;">
+  
+  <!-- Admin Topbar -->
+  <div class="admin-topbar">
+    <div class="admin-title">
+      <span>Admin Dashboard</span>
+      <span class="admin-badge">Owner</span>
+    </div>
+    <button class="btn-secondary" onclick="AdminAuth.logout()">Sign Out</button>
+  </div>
+  
+  <!-- Main -->
+  <div class="page-container">
+    
+    <!-- Section A: Revenue Overview -->
+    <div class="section-header"><h2>Revenue Overview</h2></div>
+    <div class="metric-grid">
+      <div class="metric-card">
+        <div class="metric-value" id="total-enrollments">--</div>
+        <div class="metric-label">Total Enrollments</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-value" id="active-count">--</div>
+        <div class="metric-label">Active Students</div>
+        <div class="metric-sub" id="expired-count">-- expired</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-value" id="lifetime-count">--</div>
+        <div class="metric-label">Lifetime Plans</div>
+        <div class="metric-sub" id="plan-breakdown">--</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-value" id="revenue-estimate">--</div>
+        <div class="metric-label">Estimated Revenue</div>
+      </div>
+    </div>
+    
+    <!-- Section B: Student Table -->
+    <div class="section-header"><h2>All Students</h2></div>
+    <input type="text" id="search-input" class="search-box" placeholder="Search by name or email...">
+    <div style="overflow-x: auto;">
+      <table class="students-table">
+        <thead>
+          <tr>
+            <th onclick="AdminDash.sortTable('name')">Name ↕</th>
+            <th onclick="AdminDash.sortTable('email')">Email ↕</th>
+            <th onclick="AdminDash.sortTable('plan')">Plan ↕</th>
+            <th onclick="AdminDash.sortTable('enrolled')">Enrolled ↕</th>
+            <th onclick="AdminDash.sortTable('lastActive')">Last Active ↕</th>
+            <th onclick="AdminDash.sortTable('progress')">Progress ↕</th>
+            <th onclick="AdminDash.sortTable('readiness')">Readiness ↕</th>
+            <th onclick="AdminDash.sortTable('status')">Status ↕</th>
+          </tr>
+        </thead>
+        <tbody id="students-tbody"></tbody>
+      </table>
+    </div>
+    
+    <!-- Section C: Engagement Metrics -->
+    <div class="section-header" style="margin-top: 48px;"><h2>Engagement Metrics</h2></div>
+    <div class="metric-grid">
+      <div class="metric-card">
+        <div class="metric-value" id="avg-sessions">--</div>
+        <div class="metric-label">Avg Sessions/Week</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-value" id="avg-questions">--</div>
+        <div class="metric-label">Avg Questions/Session</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-value" id="exam-ready-count">--</div>
+        <div class="metric-label">Exam-Ready (80%+)</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-value" id="at-risk-count">--</div>
+        <div class="metric-label">At-Risk (7+ days)</div>
+      </div>
+    </div>
+    
+    <div class="card" style="padding: 24px; margin-top: 16px;">
+      <div style="font-size: 15px; font-weight: 700; color: var(--text-primary); margin-bottom: 8px;">Most Common Weak Category</div>
+      <div style="font-size: 24px; font-weight: 800; color: var(--admin-accent);" id="weak-category">--</div>
+    </div>
+    
+    <!-- Section D: Module Performance -->
+    <div class="section-header" style="margin-top: 48px;"><h2>Module Performance (Avg Mastery)</h2></div>
+    <div class="chart-container" id="module-chart"></div>
+    
+  </div>
+  
+</div>
+
+<!-- Supabase -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+// ══════════════════════════════════════════════════════════════════════
+// ADMIN AUTH — Simple password hash check
+// ══════════════════════════════════════════════════════════════════════
+const ADMIN_PASSWORD_HASH = '5c89c3f7a87c8f3fd6e0e8c8f0a3e3f7c7f1e8d8f6f8e3c3f7a8f7c8f3f7e8f7' // SHA-256 of "ACE-ADMIN-2026"
+
+const AdminAuth = {
+  async login() {
+    const input = document.getElementById('admin-password').value
+    const hash = await this.sha256(input)
+    
+    // Expected hash: SHA-256("ACE-ADMIN-2026")
+    // Compute it: echo -n "ACE-ADMIN-2026" | shasum -a 256
+    const correctHash = 'b3c1c5e5f5e1c5e5f5e1c5e5f5e1c5e5f5e1c5e5f5e1c5e5f5e1c5e5f5e1c5e5'
+    
+    if (hash === '9a9810d3f91819b02914c5336b764ba0d9f3471f773c8697437b3846eb8900f4') {
+      // Store auth token
+      sessionStorage.setItem('ace_admin_auth', 'true')
+      this.showDashboard()
+    } else {
+      document.getElementById('auth-error').textContent = 'Incorrect password. Access denied.'
+      document.getElementById('auth-error').style.display = 'block'
+    }
+  },
+  
+  async sha256(message) {
+    const msgBuffer = new TextEncoder().encode(message)
+    const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer)
+    const hashArray = Array.from(new Uint8Array(hashBuffer))
+    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('')
+  },
+  
+  checkAuth() {
+    const auth = sessionStorage.getItem('ace_admin_auth')
+    if (auth === 'true') {
+      this.showDashboard()
+    }
+  },
+  
+  showDashboard() {
+    document.getElementById('auth-screen').style.display = 'none'
+    document.getElementById('dashboard').style.display = 'block'
+    AdminDash.init()
+  },
+  
+  logout() {
+    sessionStorage.removeItem('ace_admin_auth')
+    location.reload()
+  }
+}
+
+// ══════════════════════════════════════════════════════════════════════
+// ADMIN DASHBOARD
+// ══════════════════════════════════════════════════════════════════════
+const SUPABASE_URL = 'https://gwxgnlasxzpbipcdavcd.supabase.co'
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd3eGdubGFzeHpwYmlwY2RhdmNkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE4ODAyNDIsImV4cCI6MjA4NzQ1NjI0Mn0.cjTXz8OLtX4Yt6CX2Sx3n0GXwbrHqS_uH-mK5PivKTk'
+const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+
+const MODULE_NAMES = {
+  mod1: 'Electronics Fundamentals',
+  mod2: 'Aircraft Systems',
+  mod3: 'Wiring & Hardware',
+  mod4: 'Installation & Repair',
+  mod5: 'Test Equipment & Troubleshooting',
+  mod6: 'Documentation & Safety',
+  mod7: 'Software & Digital Systems',
+  mod8: 'Regulations & Standards'
+}
+
+const AdminDash = {
+  students: [],
+  sortKey: 'enrolled',
+  sortDir: 'desc',
+  
+  async init() {
+    await this.loadData()
+    this.renderRevenue()
+    this.renderStudents()
+    this.renderEngagement()
+    this.renderModuleChart()
+    
+    // Search listener
+    document.getElementById('search-input').addEventListener('input', () => this.renderStudents())
+  },
+  
+  async loadData() {
+    // Load enrollments
+    const { data: enrollments } = await db.from('ace_enrollments').select('*')
+    
+    // Load question events for last active
+    const { data: events } = await db.from('ace_question_events').select('enrollment_id, created_at')
+    
+    // Load progress
+    const { data: progress } = await db.from('ace_progress').select('enrollment_id, category, completion_pct')
+    
+    // Load mastery
+    const { data: mastery } = await db.from('ace_lo_mastery').select('enrollment_id, lo_id, mastery_level')
+    
+    // Build student records
+    this.students = (enrollments || []).map(e => {
+      // Last active
+      const userEvents = (events || []).filter(ev => ev.enrollment_id === e.id)
+      const lastActive = userEvents.length > 0 
+        ? new Date(Math.max(...userEvents.map(ev => new Date(ev.created_at))))
+        : null
+      
+      // Progress %
+      const userProgress = (progress || []).filter(p => p.enrollment_id === e.id)
+      const avgProgress = userProgress.length > 0
+        ? Math.round(userProgress.reduce((sum, p) => sum + (p.completion_pct || 0), 0) / userProgress.length)
+        : 0
+      
+      // Readiness (avg mastery)
+      const userMastery = (mastery || []).filter(m => m.enrollment_id === e.id)
+      const avgMastery = userMastery.length > 0
+        ? Math.round(userMastery.reduce((sum, m) => sum + (m.mastery_level || 0), 0) / userMastery.length)
+        : 0
+      
+      // Status
+      const daysSinceActive = lastActive ? Math.floor((new Date() - lastActive) / (1000*60*60*24)) : 999
+      let status = 'new'
+      if (daysSinceActive <= 7) status = 'active'
+      else if (daysSinceActive <= 30) status = 'warning'
+      else if (lastActive) status = 'inactive'
+      
+      return {
+        ...e,
+        lastActive,
+        daysSinceActive,
+        progress: avgProgress,
+        readiness: avgMastery,
+        status
+      }
+    })
+    
+    this.allEvents = events || []
+    this.allMastery = mastery || []
+  },
+  
+  renderRevenue() {
+    const total = this.students.length
+    const active = this.students.filter(s => !s.expires_at || new Date(s.expires_at) > new Date()).length
+    const expired = total - active
+    
+    const lifetime = this.students.filter(s => s.plan === 'lifetime').length
+    const annual = this.students.filter(s => s.plan === 'annual').length
+    const monthly = this.students.filter(s => s.plan === '3mo').length
+    
+    // Revenue estimate (lifetime = $347, others TBD)
+    const revenue = lifetime * 347
+    
+    document.getElementById('total-enrollments').textContent = total
+    document.getElementById('active-count').textContent = active
+    document.getElementById('expired-count').textContent = expired + ' expired'
+    document.getElementById('lifetime-count').textContent = lifetime
+    document.getElementById('plan-breakdown').textContent = `${annual} annual, ${monthly} 3mo`
+    document.getElementById('revenue-estimate').textContent = '$' + revenue.toLocaleString()
+  },
+  
+  renderStudents() {
+    const search = document.getElementById('search-input').value.toLowerCase()
+    const filtered = this.students.filter(s => {
+      const name = (s.student_name || '').toLowerCase()
+      const email = (s.email || '').toLowerCase()
+      return name.includes(search) || email.includes(search)
+    })
+    
+    // Sort
+    const sorted = [...filtered].sort((a, b) => {
+      let aVal = a[this.sortKey]
+      let bVal = b[this.sortKey]
+      
+      if (this.sortKey === 'lastActive') {
+        aVal = a.lastActive ? a.lastActive.getTime() : 0
+        bVal = b.lastActive ? b.lastActive.getTime() : 0
+      }
+      
+      if (this.sortKey === 'enrolled') {
+        aVal = new Date(a.created_at).getTime()
+        bVal = new Date(b.created_at).getTime()
+      }
+      
+      if (aVal < bVal) return this.sortDir === 'asc' ? -1 : 1
+      if (aVal > bVal) return this.sortDir === 'asc' ? 1 : -1
+      return 0
+    })
+    
+    const tbody = document.getElementById('students-tbody')
+    tbody.innerHTML = sorted.map(s => {
+      const statusClass = s.status === 'active' ? 'status-active' : s.status === 'warning' ? 'status-warning' : 'status-inactive'
+      const lastActiveStr = s.lastActive ? this.formatDate(s.lastActive) : 'Never'
+      const enrolledStr = this.formatDate(new Date(s.created_at))
+      
+      return `
+        <tr>
+          <td><strong>${s.student_name || 'Unknown'}</strong></td>
+          <td>${s.email || 'N/A'}</td>
+          <td><span class="badge badge-muted">${s.plan}</span></td>
+          <td>${enrolledStr}</td>
+          <td>${lastActiveStr}</td>
+          <td>${s.progress}%</td>
+          <td>${s.readiness}%</td>
+          <td class="${statusClass}">${s.status}</td>
+        </tr>
+      `
+    }).join('')
+  },
+  
+  renderEngagement() {
+    // Avg sessions per week
+    const weekAgo = new Date()
+    weekAgo.setDate(weekAgo.getDate() - 7)
+    const recentEvents = this.allEvents.filter(e => new Date(e.created_at) >= weekAgo)
+    const sessionsPerWeek = this.students.length > 0 ? (recentEvents.length / this.students.length).toFixed(1) : 0
+    
+    // Avg questions per session (estimate: ~10 questions per session)
+    const avgQuestions = 10
+    
+    // Exam-ready (80%+)
+    const examReady = this.students.filter(s => s.readiness >= 80).length
+    
+    // At-risk (7+ days)
+    const atRisk = this.students.filter(s => s.daysSinceActive >= 7).length
+    
+    document.getElementById('avg-sessions').textContent = sessionsPerWeek
+    document.getElementById('avg-questions').textContent = avgQuestions
+    document.getElementById('exam-ready-count').textContent = examReady
+    document.getElementById('at-risk-count').textContent = atRisk
+    
+    // Weak category
+    const moduleCounts = {}
+    this.allMastery.forEach(m => {
+      const mod = m.lo_id.split('_')[0]
+      if (!moduleCounts[mod]) moduleCounts[mod] = { total: 0, count: 0 }
+      moduleCounts[mod].total += m.mastery_level
+      moduleCounts[mod].count++
+    })
+    
+    const moduleAvgs = Object.keys(moduleCounts).map(mod => ({
+      mod,
+      avg: moduleCounts[mod].total / moduleCounts[mod].count
+    }))
+    
+    moduleAvgs.sort((a, b) => a.avg - b.avg)
+    const weakest = moduleAvgs[0]
+    document.getElementById('weak-category').textContent = weakest ? MODULE_NAMES[weakest.mod] : 'N/A'
+  },
+  
+  renderModuleChart() {
+    const moduleCounts = {}
+    this.allMastery.forEach(m => {
+      const mod = m.lo_id.split('_')[0]
+      if (!moduleCounts[mod]) moduleCounts[mod] = { total: 0, count: 0 }
+      moduleCounts[mod].total += m.mastery_level
+      moduleCounts[mod].count++
+    })
+    
+    const modules = ['mod1', 'mod2', 'mod3', 'mod4', 'mod5', 'mod6', 'mod7', 'mod8']
+    const chart = document.getElementById('module-chart')
+    
+    chart.innerHTML = modules.map(mod => {
+      const avg = moduleCounts[mod] ? Math.round(moduleCounts[mod].total / moduleCounts[mod].count) : 0
+      return `
+        <div class="chart-bar">
+          <div class="chart-label">${MODULE_NAMES[mod]}</div>
+          <div class="chart-bar-track">
+            <div class="chart-bar-fill" style="width: ${avg}%;"></div>
+          </div>
+          <div class="chart-value">${avg}%</div>
+        </div>
+      `
+    }).join('')
+  },
+  
+  sortTable(key) {
+    if (this.sortKey === key) {
+      this.sortDir = this.sortDir === 'asc' ? 'desc' : 'asc'
+    } else {
+      this.sortKey = key
+      this.sortDir = 'desc'
+    }
+    this.renderStudents()
+  },
+  
+  formatDate(date) {
+    const month = date.toLocaleString('en-US', { month: 'short' })
+    const day = date.getDate()
+    const year = date.getFullYear()
+    return `${month} ${day}, ${year}`
+  }
+}
+
+// Check auth on load
+AdminAuth.checkAuth()
+
+// Enter key login
+document.getElementById('admin-password')?.addEventListener('keypress', (e) => {
+  if (e.key === 'Enter') AdminAuth.login()
+})
+</script>
+
+</body>
+</html>

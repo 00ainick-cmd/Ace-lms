@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Study Plan Generator — ACE Avionics Training</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="shared/ace-theme.css">
+  <style>
+    .timeline { display: flex; flex-direction: column; gap: 16px; margin-top: 24px; }
+    .week-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      transition: all var(--transition-med);
+      position: relative;
+    }
+    .week-card.current { border-color: var(--gold); background: var(--gold-soft); }
+    .week-card:hover { border-color: var(--border-hover); }
+    .week-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+    .week-label {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-muted);
+    }
+    .week-card.current .week-label { color: var(--gold); }
+    .week-date-range {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    .week-focus {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+    }
+    .week-goals {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .goal-chip {
+      padding: 4px 12px;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-full);
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+    .readiness-panel {
+      background: var(--surface);
+      border: 2px solid var(--gold);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      margin-bottom: 24px;
+      text-align: center;
+    }
+    .readiness-meter {
+      font-size: 56px;
+      font-weight: 800;
+      font-family: var(--font-mono);
+      color: var(--gold);
+      line-height: 1;
+      margin: 12px 0;
+    }
+    .readiness-label {
+      font-size: 14px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .readiness-desc {
+      margin-top: 8px;
+      color: var(--text-secondary);
+      font-size: 13px;
+    }
+    .exam-date-input {
+      width: 100%;
+      max-width: 300px;
+      padding: 12px;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      color: var(--text-primary);
+      font-family: var(--font-mono);
+      font-size: 14px;
+      margin: 16px auto;
+      display: block;
+    }
+    .coming-soon {
+      background: var(--surface-2);
+      border: 1px dashed var(--border);
+      border-radius: var(--radius-lg);
+      padding: 32px;
+      text-align: center;
+      margin-top: 48px;
+      color: var(--text-muted);
+    }
+  </style>
+</head>
+<body>
+
+<!-- Topbar -->
+<div class="topbar">
+  <a href="dashboard.html" class="topbar-logo">
+    <img src="shared/images/logo.svg" alt="ACE Avionics" class="logo-img">
+  </a>
+  <div class="topbar-right">
+    <a href="progress.html" class="topbar-btn">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+      Progress
+    </a>
+  </div>
+</div>
+
+<!-- Main -->
+<div class="page-container">
+  
+  <!-- Set Exam Date (shown if not set) -->
+  <div id="exam-date-prompt" style="display:none;">
+    <div class="card" style="padding: 32px; text-align: center; margin-bottom: 24px;">
+      <h1 style="font-size: 24px; font-weight: 800; color: var(--text-primary); margin-bottom: 12px;">Set Your Exam Date</h1>
+      <p style="color: var(--text-secondary); margin-bottom: 20px;">When are you planning to take the CAET exam? We'll build your personalized study plan around this date.</p>
+      <input type="date" id="exam-date-picker" class="exam-date-input">
+      <button class="btn-primary" onclick="StudyPlan.setExamDate()" style="margin-top: 16px;">Generate Study Plan</button>
+    </div>
+  </div>
+  
+  <!-- Readiness Panel -->
+  <div id="readiness-panel" class="readiness-panel" style="display:none;">
+    <div class="readiness-label">Predicted Exam Readiness</div>
+    <div class="readiness-meter" id="readiness-score">--</div>
+    <div class="readiness-desc" id="readiness-desc">--</div>
+    <button class="btn-secondary" onclick="StudyPlan.recalculate()" style="margin-top: 16px;">Recalculate Plan</button>
+  </div>
+  
+  <!-- Timeline -->
+  <div id="timeline-container" style="display:none;">
+    <div class="section-header"><h2>Your Study Plan</h2></div>
+    <div class="timeline" id="timeline"></div>
+  </div>
+  
+  <!-- Coming Soon -->
+  <div class="coming-soon">
+    <div style="font-size: 20px; font-weight: 700; color: var(--text-primary); margin-bottom: 8px;">Want AI-powered coaching?</div>
+    <div>Coming soon: real-time coaching, adaptive study sessions, and personalized drills based on your performance.</div>
+  </div>
+  
+</div>
+
+<!-- Auth -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="shared/js/ace-auth.js"></script>
+<script>AceAuth.require()</script>
+
+<!-- Study Plan Generator -->
+<script>
+const CATEGORY_WEIGHTS = {
+  mod1: 10/60, mod2: 13/60, mod3: 9/60, mod4: 7/60,
+  mod5: 8/60, mod6: 7/60, mod7: 3/60, mod8: 3/60
+}
+
+const MODULE_NAMES = {
+  mod1: 'Electronics Fundamentals',
+  mod2: 'Aircraft Systems',
+  mod3: 'Wiring & Hardware',
+  mod4: 'Installation & Repair',
+  mod5: 'Test Equipment & Troubleshooting',
+  mod6: 'Documentation & Safety',
+  mod7: 'Software & Digital Systems',
+  mod8: 'Regulations & Standards'
+}
+
+const StudyPlan = {
+  
+  async init() {
+    const examDate = localStorage.getItem('ace_exam_date')
+    if (!examDate) {
+      document.getElementById('exam-date-prompt').style.display = 'block'
+      // Set min date to tomorrow
+      const tomorrow = new Date()
+      tomorrow.setDate(tomorrow.getDate() + 1)
+      document.getElementById('exam-date-picker').min = tomorrow.toISOString().split('T')[0]
+    } else {
+      this.generatePlan()
+    }
+  },
+  
+  setExamDate() {
+    const picker = document.getElementById('exam-date-picker')
+    const dateVal = picker.value
+    if (!dateVal) {
+      alert('Please select an exam date.')
+      return
+    }
+    localStorage.setItem('ace_exam_date', dateVal)
+    document.getElementById('exam-date-prompt').style.display = 'none'
+    this.generatePlan()
+  },
+  
+  recalculate() {
+    this.generatePlan()
+  },
+  
+  generatePlan() {
+    // Load data
+    const examDate = localStorage.getItem('ace_exam_date')
+    const masteryData = this.getMasteryData()
+    const moduleMastery = this.computeModuleMastery(masteryData)
+    
+    // Calculate weeks until exam
+    const weeksUntilExam = this.getWeeksUntilExam(examDate)
+    if (weeksUntilExam <= 0) {
+      alert('Your exam date is in the past or today. Please update it.')
+      return
+    }
+    
+    // Calculate readiness
+    const readiness = this.calculateReadiness(moduleMastery)
+    this.displayReadiness(readiness, examDate)
+    
+    // Generate week-by-week plan
+    const plan = this.buildWeeklyPlan(moduleMastery, weeksUntilExam)
+    this.displayTimeline(plan)
+    
+    // Show panels
+    document.getElementById('readiness-panel').style.display = 'block'
+    document.getElementById('timeline-container').style.display = 'block'
+  },
+  
+  getMasteryData() {
+    try {
+      const raw = localStorage.getItem('ace_lo_mastery')
+      return raw ? JSON.parse(raw) : {}
+    } catch { return {} }
+  },
+  
+  computeModuleMastery(masteryData) {
+    const modules = ['mod1', 'mod2', 'mod3', 'mod4', 'mod5', 'mod6', 'mod7', 'mod8']
+    return modules.map(mod => {
+      const loKeys = Object.keys(masteryData).filter(k => k.startsWith(mod + '_'))
+      if (loKeys.length === 0) return { mod, name: MODULE_NAMES[mod], score: 0 }
+      const avg = loKeys.reduce((sum, k) => sum + (masteryData[k] || 0), 0) / loKeys.length
+      return { mod, name: MODULE_NAMES[mod], score: avg }
+    })
+  },
+  
+  calculateReadiness(moduleMastery) {
+    let weightedSum = 0
+    moduleMastery.forEach(m => {
+      weightedSum += m.score * CATEGORY_WEIGHTS[m.mod]
+    })
+    return Math.round(weightedSum)
+  },
+  
+  displayReadiness(readiness, examDate) {
+    const scoreEl = document.getElementById('readiness-score')
+    const descEl = document.getElementById('readiness-desc')
+    
+    scoreEl.textContent = readiness + '%'
+    
+    const daysUntil = this.getDaysUntil(examDate)
+    let desc = `Exam in ${daysUntil} days. `
+    
+    if (readiness >= 80) {
+      desc += 'You're ready! Keep up the momentum.'
+      scoreEl.style.color = 'var(--success)'
+    } else if (readiness >= 60) {
+      desc += 'You're on track. Focus on weak areas this week.'
+      scoreEl.style.color = 'var(--warning)'
+    } else {
+      desc += 'You need more study time. Follow the plan closely.'
+      scoreEl.style.color = 'var(--danger)'
+    }
+    
+    descEl.textContent = desc
+  },
+  
+  buildWeeklyPlan(moduleMastery, weeksUntilExam) {
+    // Sort modules by score (weakest first)
+    const sorted = [...moduleMastery].sort((a, b) => a.score - b.score)
+    
+    // Assign time weights
+    const weighted = sorted.map(m => {
+      let weight = 1
+      if (m.score < 60) weight = 3
+      else if (m.score < 80) weight = 2
+      return { ...m, weight }
+    })
+    
+    // Total time units available (weeks - 1 for final week mock)
+    const studyWeeks = Math.max(1, weeksUntilExam - 1)
+    
+    // Distribute modules across weeks
+    const plan = []
+    const totalWeight = weighted.reduce((sum, m) => sum + m.weight, 0)
+    
+    let weekNum = 1
+    let currentWeekStart = new Date()
+    
+    weighted.forEach(m => {
+      const weeksForModule = Math.max(1, Math.round((m.weight / totalWeight) * studyWeeks))
+      for (let i = 0; i < weeksForModule && weekNum <= studyWeeks; i++) {
+        const weekEnd = new Date(currentWeekStart)
+        weekEnd.setDate(weekEnd.getDate() + 6)
+        
+        plan.push({
+          weekNum,
+          startDate: new Date(currentWeekStart),
+          endDate: weekEnd,
+          focus: m.name,
+          mod: m.mod,
+          currentScore: Math.round(m.score),
+          targetImprovement: m.score < 80 ? '10-15%' : '5-10%',
+          activities: this.getActivitiesForScore(m.score)
+        })
+        
+        currentWeekStart.setDate(currentWeekStart.getDate() + 7)
+        weekNum++
+      }
+    })
+    
+    // Final week = mock exam
+    const finalStart = new Date(currentWeekStart)
+    const finalEnd = new Date(finalStart)
+    finalEnd.setDate(finalEnd.getDate() + 6)
+    
+    plan.push({
+      weekNum: weeksUntilExam,
+      startDate: finalStart,
+      endDate: finalEnd,
+      focus: 'Full Mock Exam + Review',
+      mod: 'final',
+      currentScore: null,
+      targetImprovement: null,
+      activities: ['Take full 60-question mock exam', 'Review all weak areas', 'Final confidence check']
+    })
+    
+    return plan
+  },
+  
+  getActivitiesForScore(score) {
+    if (score < 60) {
+      return [
+        '3-4 drill sessions this week',
+        'Review flashcards daily',
+        'Complete related training modules'
+      ]
+    } else if (score < 80) {
+      return [
+        '2-3 drill sessions this week',
+        'Focus on edge cases',
+        'Review weak learning objectives'
+      ]
+    } else {
+      return [
+        '1-2 maintenance drills',
+        'Quick flashcard review',
+        'Keep skills sharp'
+      ]
+    }
+  },
+  
+  displayTimeline(plan) {
+    const timeline = document.getElementById('timeline')
+    timeline.innerHTML = ''
+    
+    const currentWeek = this.getCurrentWeekNum(plan)
+    
+    plan.forEach(week => {
+      const card = document.createElement('div')
+      card.className = 'week-card'
+      if (week.weekNum === currentWeek) card.classList.add('current')
+      
+      const dateRange = `${this.formatDate(week.startDate)} – ${this.formatDate(week.endDate)}`
+      
+      const goalsHTML = week.activities.map(a => `<span class="goal-chip">${a}</span>`).join('')
+      
+      const improvementHTML = week.targetImprovement 
+        ? `<div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Current: ${week.currentScore}% → Target improvement: ${week.targetImprovement}</div>`
+        : ''
+      
+      card.innerHTML = `
+        <div class="week-header">
+          <div class="week-label">Week ${week.weekNum}</div>
+          <div class="week-date-range">${dateRange}</div>
+        </div>
+        <div class="week-focus">${week.focus}</div>
+        ${improvementHTML}
+        <div class="week-goals">${goalsHTML}</div>
+        ${week.mod !== 'final' ? `<a href="hub.html?cat=${week.mod}" class="btn-secondary" style="margin-top: 12px; display: inline-flex;">Go to ${week.focus}</a>` : ''}
+      `
+      
+      timeline.appendChild(card)
+    })
+  },
+  
+  getCurrentWeekNum(plan) {
+    const now = new Date()
+    for (let week of plan) {
+      if (now >= week.startDate && now <= week.endDate) return week.weekNum
+    }
+    return 1
+  },
+  
+  formatDate(date) {
+    const month = date.toLocaleString('en-US', { month: 'short' })
+    const day = date.getDate()
+    return `${month} ${day}`
+  },
+  
+  getWeeksUntilExam(examDateStr) {
+    const exam = new Date(examDateStr)
+    const now = new Date()
+    const diff = exam - now
+    return Math.ceil(diff / (1000 * 60 * 60 * 24 * 7))
+  },
+  
+  getDaysUntil(dateStr) {
+    const target = new Date(dateStr)
+    const now = new Date()
+    const diff = target - now
+    return Math.ceil(diff / (1000 * 60 * 60 * 24))
+  }
+}
+
+// Initialize
+StudyPlan.init()
+</script>
+
+</body>
+</html>

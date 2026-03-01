@@ -1,0 +1,46 @@
+{
+  "triggers": [
+    {
+      "id": "welcome_48h",
+      "condition": "enrolled_no_activity_48h",
+      "template": "welcome",
+      "max_sends": 1,
+      "cooldown_days": null
+    },
+    {
+      "id": "inactive_5d",
+      "condition": "no_activity_5_days",
+      "template": "re_engagement",
+      "max_sends": 3,
+      "cooldown_days": 7
+    },
+    {
+      "id": "exam_ready",
+      "condition": "mock_score_above_80",
+      "template": "exam_ready",
+      "max_sends": 1,
+      "cooldown_days": null
+    },
+    {
+      "id": "score_declining",
+      "condition": "score_dropped_10pct_3_sessions",
+      "template": "at_risk",
+      "max_sends": 2,
+      "cooldown_days": 14
+    },
+    {
+      "id": "all_complete",
+      "condition": "all_modules_complete_no_exam",
+      "template": "completion",
+      "max_sends": 1,
+      "cooldown_days": null
+    },
+    {
+      "id": "upsell_advanced",
+      "condition": "entry_complete_and_certified",
+      "template": "upsell_advanced",
+      "max_sends": 2,
+      "cooldown_days": 30
+    }
+  ]
+}

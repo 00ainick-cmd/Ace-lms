@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Welcome to ACE Avionics Training | Get Started</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="shared/ace-theme.css">
+  <style>
+    body {
+      background: var(--bg);
+      color: var(--text-primary);
+      font-family: 'Inter', sans-serif;
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 40px 24px;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+
+    .header h1 {
+      font-size: 32px;
+      font-weight: 800;
+      color: var(--gold);
+      margin: 0 0 8px;
+    }
+
+    .header p {
+      color: var(--text-secondary);
+      font-size: 16px;
+      margin: 0;
+    }
+
+    /* Progress Steps */
+    .progress-steps {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 48px;
+    }
+
+    .step-indicator {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .step-dot {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--surface-2);
+      border: 2px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 14px;
+      color: var(--text-muted);
+      transition: all 0.3s;
+    }
+
+    .step-dot.active {
+      background: var(--gold);
+      border-color: var(--gold);
+      color: var(--bg);
+    }
+
+    .step-dot.complete {
+      background: var(--success);
+      border-color: var(--success);
+      color: var(--bg);
+    }
+
+    .step-line {
+      width: 40px;
+      height: 2px;
+      background: var(--border);
+    }
+
+    /* Card */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 32px;
+    }
+
+    /* Form Elements */
+    .form-group {
+      margin-bottom: 24px;
+    }
+
+    label {
+      display: block;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+
+    input[type="text"],
+    input[type="date"],
+    select {
+      width: 100%;
+      padding: 12px 16px;
+      background: var(--surface-3);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text-primary);
+      font-family: 'Inter', sans-serif;
+      font-size: 15px;
+      transition: border-color 0.2s;
+      box-sizing: border-box;
+    }
+
+    input:focus,
+    select:focus {
+      outline: none;
+      border-color: var(--gold);
+    }
+
+    /* Radio Buttons */
+    .radio-group {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .radio-option {
+      display: flex;
+      align-items: center;
+      padding: 14px 16px;
+      background: var(--surface-3);
+      border: 2px solid var(--border);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .radio-option:hover {
+      border-color: var(--gold);
+      background: var(--surface-hover);
+    }
+
+    .radio-option input {
+      margin-right: 12px;
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+    }
+
+    .radio-option.selected {
+      border-color: var(--gold);
+      background: var(--gold-soft);
+    }
+
+    /* Buttons */
+    .btn {
+      padding: 14px 32px;
+      font-size: 16px;
+      font-weight: 600;
+      border-radius: var(--radius-sm);
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .btn-primary {
+      background: var(--gold);
+      color: var(--bg);
+    }
+
+    .btn-primary:hover {
+      background: #E5B964;
+      transform: translateY(-1px);
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .btn-secondary {
+      background: var(--surface-3);
+      color: var(--text-primary);
+      border: 1px solid var(--border);
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--gold);
+    }
+
+    .btn-row {
+      display: flex;
+      gap: 12px;
+      justify-content: space-between;
+      margin-top: 32px;
+    }
+
+    /* Question Display */
+    .question-card {
+      margin-bottom: 24px;
+    }
+
+    .question-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .question-number {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--gold);
+    }
+
+    .question-category {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .question-text {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 20px;
+      line-height: 1.5;
+    }
+
+    .choices {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .choice {
+      padding: 16px;
+      background: var(--surface-3);
+      border: 2px solid var(--border);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .choice:hover {
+      border-color: var(--gold);
+      background: var(--surface-hover);
+    }
+
+    .choice.selected {
+      border-color: var(--gold);
+      background: var(--gold-soft);
+    }
+
+    /* Progress Bar */
+    .progress-bar {
+      width: 100%;
+      height: 8px;
+      background: var(--surface-3);
+      border-radius: 4px;
+      overflow: hidden;
+      margin-bottom: 32px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: var(--gold);
+      transition: width 0.3s;
+    }
+
+    /* Results Chart */
+    .results-chart {
+      margin: 32px 0;
+    }
+
+    .category-bar {
+      margin-bottom: 20px;
+    }
+
+    .category-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+
+    .category-name {
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .category-score {
+      font-weight: 700;
+      font-size: 14px;
+    }
+
+    .bar-container {
+      width: 100%;
+      height: 32px;
+      background: var(--surface-3);
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .bar-fill {
+      height: 100%;
+      transition: width 0.5s ease-out;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding-right: 12px;
+      font-weight: 600;
+      font-size: 13px;
+    }
+
+    .bar-fill.strong {
+      background: var(--success);
+      color: var(--bg);
+    }
+
+    .bar-fill.moderate {
+      background: var(--warning);
+      color: var(--bg);
+    }
+
+    .bar-fill.weak {
+      background: var(--danger);
+      color: var(--text-primary);
+    }
+
+    .study-plan {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 24px;
+      margin: 32px 0;
+    }
+
+    .study-plan h3 {
+      color: var(--gold);
+      font-size: 18px;
+      margin: 0 0 16px;
+    }
+
+    .study-plan ol {
+      margin: 0;
+      padding-left: 24px;
+    }
+
+    .study-plan li {
+      margin-bottom: 8px;
+      color: var(--text-primary);
+    }
+
+    .military-note {
+      background: var(--blue-soft);
+      border-left: 4px solid var(--blue);
+      padding: 16px;
+      border-radius: var(--radius-sm);
+      margin: 24px 0;
+    }
+
+    .military-note strong {
+      color: var(--blue);
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    @media (max-width: 640px) {
+      .container {
+        padding: 24px 16px;
+      }
+
+      .header h1 {
+        font-size: 24px;
+      }
+
+      .card {
+        padding: 24px 20px;
+      }
+
+      .btn-row {
+        flex-direction: column;
+      }
+
+      .step-line {
+        width: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>🛩️ Welcome to ACE Avionics Training</h1>
+      <p>Let's personalize your CAET exam prep experience</p>
+    </div>
+
+    <div class="progress-steps">
+      <div class="step-indicator">
+        <div class="step-dot active" id="dot-1">1</div>
+      </div>
+      <div class="step-line"></div>
+      <div class="step-indicator">
+        <div class="step-dot" id="dot-2">2</div>
+      </div>
+      <div class="step-line"></div>
+      <div class="step-indicator">
+        <div class="step-dot" id="dot-3">3</div>
+      </div>
+    </div>
+
+    <!-- STEP 1: Profile -->
+    <div class="card" id="step-1">
+      <h2 style="margin-top: 0; color: var(--gold);">Tell us about yourself</h2>
+      
+      <div class="form-group">
+        <label for="student-name">Your Name</label>
+        <input type="text" id="student-name" placeholder="Enter your full name">
+      </div>
+
+      <div class="form-group">
+        <label>Background</label>
+        <div class="radio-group">
+          <label class="radio-option">
+            <input type="radio" name="background" value="military">
+            <span>Military Transitioning</span>
+          </label>
+          <label class="radio-option">
+            <input type="radio" name="background" value="part147">
+            <span>Part 147 Graduate</span>
+          </label>
+          <label class="radio-option">
+            <input type="radio" name="background" value="career-changer">
+            <span>Career Changer</span>
+          </label>
+          <label class="radio-option">
+            <input type="radio" name="background" value="working-tech">
+            <span>Working Technician</span>
+          </label>
+          <label class="radio-option">
+            <input type="radio" name="background" value="other">
+            <span>Other</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="form-group hidden" id="military-fields">
+        <label for="branch">Branch of Service</label>
+        <select id="branch">
+          <option value="">Select branch...</option>
+          <option value="Air Force">Air Force</option>
+          <option value="Army">Army</option>
+          <option value="Navy">Navy</option>
+          <option value="Marines">Marines</option>
+          <option value="Coast Guard">Coast Guard</option>
+        </select>
+
+        <label for="mos" style="margin-top: 16px;">MOS/AFSC/Rating</label>
+        <input type="text" id="mos" placeholder="e.g., 2A373, 94D, AT">
+      </div>
+
+      <div class="btn-row">
+        <div></div>
+        <button class="btn btn-primary" onclick="goToStep2()" id="next-step-1">Next: Quick Diagnostic →</button>
+      </div>
+    </div>
+
+    <!-- STEP 2: Diagnostic -->
+    <div class="card hidden" id="step-2">
+      <h2 style="margin-top: 0; color: var(--gold);">Quick Diagnostic</h2>
+      <p style="color: var(--text-secondary); margin-bottom: 24px;">
+        Answer 24 questions to identify your strengths and weaknesses. No timer — take your time.
+      </p>
+
+      <div class="progress-bar">
+        <div class="progress-fill" id="question-progress" style="width: 0%"></div>
+      </div>
+
+      <div class="question-card" id="question-display">
+        <!-- Questions populated by JS -->
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-secondary hidden" onclick="previousQuestion()" id="prev-btn">← Previous</button>
+        <button class="btn btn-primary" onclick="nextQuestion()" id="next-btn" disabled>Next Question →</button>
+      </div>
+    </div>
+
+    <!-- STEP 3: Results & Study Plan -->
+    <div class="card hidden" id="step-3">
+      <h2 style="margin-top: 0; color: var(--gold);">Your Personalized Study Plan</h2>
+      
+      <div id="military-note-container"></div>
+
+      <div class="results-chart" id="results-display">
+        <!-- Results populated by JS -->
+      </div>
+
+      <div class="study-plan" id="study-plan-display">
+        <!-- Study plan populated by JS -->
+      </div>
+
+      <div class="form-group">
+        <label for="exam-date">Set Your Exam Date (Optional)</label>
+        <input type="date" id="exam-date">
+      </div>
+
+      <div class="btn-row">
+        <div></div>
+        <button class="btn btn-primary" onclick="finishOnboarding()" style="font-size: 18px; padding: 16px 48px;">Start Training →</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="shared/js/ace-auth.js"></script>
+  <script>
+    // Check auth and pre-fill name if available
+    (async function() {
+      const session = await AceAuth.getSession()
+      if (session && session.name) {
+        document.getElementById('student-name').value = session.name
+      }
+    })()
+
+    // Category metadata
+    const CATEGORIES = [
+      { id: 'mod1-maintenance-regs', name: 'Maintenance Regs & Documentation', short: 'Maintenance Regs' },
+      { id: 'mod2-basic-electrical', name: 'Basic Electrical Theory & Systems', short: 'Basic Electrical' },
+      { id: 'mod3-cns-systems', name: 'Communication, Navigation & Surveillance (CNS)', short: 'CNS Systems' },
+      { id: 'mod4-flight-instruments', name: 'Flight Instruments & Pitot-Static', short: 'Flight Instruments' },
+      { id: 'mod5-digital-databus', name: 'Digital Databus Systems', short: 'Digital Databus' },
+      { id: 'mod6-aircraft-wiring', name: 'Aircraft Wiring & Installation', short: 'Aircraft Wiring' },
+      { id: 'mod7-tools-test-equipment', name: 'Tools & Test Equipment', short: 'Tools & Test Equipment' },
+      { id: 'mod8-shop-safety', name: 'Safety & Best Practices', short: 'Safety & Best Practices' }
+    ]
+
+    let masterBank = null
+    let diagnosticQuestions = []
+    let currentQuestionIndex = 0
+    let answers = []
+    let studentProfile = {}
+
+    // Load question bank
+    fetch('shared/data/master-bank.json')
+      .then(r => r.json())
+      .then(data => {
+        masterBank = data
+        prepareDigagnostic()
+      })
+
+    // Step 1: Background selection
+    document.querySelectorAll('input[name="background"]').forEach(radio => {
+      radio.addEventListener('change', (e) => {
+        document.querySelectorAll('.radio-option').forEach(opt => opt.classList.remove('selected'))
+        e.target.closest('.radio-option').classList.add('selected')
+        
+        const militaryFields = document.getElementById('military-fields')
+        if (e.target.value === 'military') {
+          militaryFields.classList.remove('hidden')
+        } else {
+          militaryFields.classList.add('hidden')
+        }
+      })
+    })
+
+    function prepareDigagnostic() {
+      // Select 3 random questions per category
+      diagnosticQuestions = []
+      CATEGORIES.forEach(cat => {
+        const catQuestions = masterBank.questions.filter(q => q.category === cat.id)
+        const shuffled = catQuestions.sort(() => 0.5 - Math.random())
+        const selected = shuffled.slice(0, 3)
+        diagnosticQuestions.push(...selected)
+      })
+      // Shuffle all questions
+      diagnosticQuestions = diagnosticQuestions.sort(() => 0.5 - Math.random())
+    }
+
+    function goToStep2() {
+      const name = document.getElementById('student-name').value.trim()
+      const background = document.querySelector('input[name="background"]:checked')?.value
+      
+      if (!name || !background) {
+        alert('Please fill in your name and select a background.')
+        return
+      }
+
+      studentProfile = { name, background }
+      
+      if (background === 'military') {
+        const branch = document.getElementById('branch').value
+        const mos = document.getElementById('mos').value.trim()
+        if (!branch || !mos) {
+          alert('Please select your branch and enter your MOS/AFSC.')
+          return
+        }
+        studentProfile.branch = branch
+        studentProfile.mos = mos
+      }
+
+      // Save profile
+      localStorage.setItem('ace_student_profile', JSON.stringify(studentProfile))
+
+      // Move to step 2
+      document.getElementById('step-1').classList.add('hidden')
+      document.getElementById('step-2').classList.remove('hidden')
+      document.getElementById('dot-1').classList.remove('active')
+      document.getElementById('dot-1').classList.add('complete')
+      document.getElementById('dot-2').classList.add('active')
+
+      displayQuestion()
+    }
+
+    function displayQuestion() {
+      const q = diagnosticQuestions[currentQuestionIndex]
+      const catName = CATEGORIES.find(c => c.id === q.category)?.short || q.category
+      const progress = ((currentQuestionIndex + 1) / diagnosticQuestions.length) * 100
+      
+      document.getElementById('question-progress').style.width = progress + '%'
+      
+      const html = `
+        <div class="question-header">
+          <div class="question-number">Question ${currentQuestionIndex + 1} of ${diagnosticQuestions.length}</div>
+          <div class="question-category">${catName}</div>
+        </div>
+        <div class="question-text">${q.multipleChoice.question}</div>
+        <div class="choices">
+          ${q.multipleChoice.choices.map((choice, i) => `
+            <div class="choice" data-index="${i}" onclick="selectChoice(${i})">
+              ${choice}
+            </div>
+          `).join('')}
+        </div>
+      `
+      document.getElementById('question-display').innerHTML = html
+
+      // Re-select if already answered
+      if (answers[currentQuestionIndex] !== undefined) {
+        document.querySelector(`.choice[data-index="${answers[currentQuestionIndex]}"]`)?.classList.add('selected')
+        document.getElementById('next-btn').disabled = false
+      } else {
+        document.getElementById('next-btn').disabled = true
+      }
+
+      // Show/hide prev button
+      if (currentQuestionIndex > 0) {
+        document.getElementById('prev-btn').classList.remove('hidden')
+      } else {
+        document.getElementById('prev-btn').classList.add('hidden')
+      }
+
+      // Change next button text on last question
+      if (currentQuestionIndex === diagnosticQuestions.length - 1) {
+        document.getElementById('next-btn').textContent = 'See Results →'
+      } else {
+        document.getElementById('next-btn').textContent = 'Next Question →'
+      }
+    }
+
+    function selectChoice(index) {
+      document.querySelectorAll('.choice').forEach(c => c.classList.remove('selected'))
+      document.querySelector(`.choice[data-index="${index}"]`).classList.add('selected')
+      answers[currentQuestionIndex] = index
+      document.getElementById('next-btn').disabled = false
+    }
+
+    function nextQuestion() {
+      if (currentQuestionIndex < diagnosticQuestions.length - 1) {
+        currentQuestionIndex++
+        displayQuestion()
+      } else {
+        showResults()
+      }
+    }
+
+    function previousQuestion() {
+      if (currentQuestionIndex > 0) {
+        currentQuestionIndex--
+        displayQuestion()
+      }
+    }
+
+    function showResults() {
+      // Calculate scores per category
+      const categoryScores = {}
+      CATEGORIES.forEach(cat => {
+        categoryScores[cat.id] = { correct: 0, total: 0, name: cat.short }
+      })
+
+      diagnosticQuestions.forEach((q, i) => {
+        const userAnswer = answers[i]
+        const correctAnswer = q.multipleChoice.correctIndex
+        categoryScores[q.category].total++
+        if (userAnswer === correctAnswer) {
+          categoryScores[q.category].correct++
+        }
+      })
+
+      // Calculate percentages
+      const results = []
+      Object.keys(categoryScores).forEach(catId => {
+        const score = categoryScores[catId]
+        const pct = score.total > 0 ? Math.round((score.correct / score.total) * 100) : 0
+        results.push({
+          id: catId,
+          name: score.name,
+          percentage: pct,
+          correct: score.correct,
+          total: score.total
+        })
+      })
+
+      // Sort by percentage (weakest first)
+      results.sort((a, b) => a.percentage - b.percentage)
+
+      // Save results
+      const diagnosticResults = {}
+      results.forEach(r => {
+        diagnosticResults[r.id] = r.percentage
+      })
+      localStorage.setItem('ace_diagnostic_results', JSON.stringify(diagnosticResults))
+
+      // Display results
+      displayResultsChart(results)
+      displayStudyPlan(results)
+      displayMilitaryNote()
+
+      // Move to step 3
+      document.getElementById('step-2').classList.add('hidden')
+      document.getElementById('step-3').classList.remove('hidden')
+      document.getElementById('dot-2').classList.remove('active')
+      document.getElementById('dot-2').classList.add('complete')
+      document.getElementById('dot-3').classList.add('active')
+    }
+
+    function displayResultsChart(results) {
+      let html = ''
+      results.forEach(r => {
+        const colorClass = r.percentage >= 80 ? 'strong' : r.percentage >= 60 ? 'moderate' : 'weak'
+        html += `
+          <div class="category-bar">
+            <div class="category-header">
+              <span class="category-name">${r.name}</span>
+              <span class="category-score">${r.correct}/${r.total} (${r.percentage}%)</span>
+            </div>
+            <div class="bar-container">
+              <div class="bar-fill ${colorClass}" style="width: ${r.percentage}%"></div>
+            </div>
+          </div>
+        `
+      })
+      document.getElementById('results-display').innerHTML = html
+    }
+
+    function displayStudyPlan(results) {
+      const weakest = results[0]
+      let html = `<h3>Recommended Study Order</h3>`
+      html += `<p style="color: var(--text-secondary); margin-bottom: 16px;">Based on your diagnostic, start with <strong style="color: var(--gold);">${weakest.name}</strong>. Here's your recommended order:</p>`
+      html += `<ol>`
+      results.forEach(r => {
+        const emoji = r.percentage >= 80 ? '✅' : r.percentage >= 60 ? '⚠️' : '🔴'
+        html += `<li>${emoji} <strong>${r.name}</strong> — ${r.percentage}%</li>`
+      })
+      html += `</ol>`
+      document.getElementById('study-plan-display').innerHTML = html
+    }
+
+    async function displayMilitaryNote() {
+      if (studentProfile.background !== 'military' || !studentProfile.branch || !studentProfile.mos) {
+        return
+      }
+
+      try {
+        const response = await fetch('shared/data/military-crosswalk.json')
+        const crosswalk = await response.json()
+        const branchData = crosswalk[studentProfile.branch]
+        if (!branchData) return
+
+        const mosData = branchData[studentProfile.mos.toUpperCase()]
+        if (!mosData) return
+
+        const strongNames = mosData.likely_strong.map(id => CATEGORIES.find(c => c.id === id)?.short).filter(Boolean)
+        const weakNames = mosData.likely_weak.map(id => CATEGORIES.find(c => c.id === id)?.short).filter(Boolean)
+
+        const html = `
+          <div class="military-note">
+            <strong>🎖️ Military Experience Insight</strong><br>
+            As a former ${studentProfile.branch} <strong>${mosData.title}</strong> (${studentProfile.mos}), you likely have strength in <strong>${strongNames.join(', ')}</strong>. ${mosData.note}
+          </div>
+        `
+        document.getElementById('military-note-container').innerHTML = html
+      } catch (err) {
+        console.error('Failed to load military crosswalk:', err)
+      }
+    }
+
+    function finishOnboarding() {
+      const examDate = document.getElementById('exam-date').value
+      if (examDate) {
+        localStorage.setItem('ace_exam_date', examDate)
+      }
+      window.location.href = 'dashboard.html'
+    }
+  </script>
+</body>
+</html>

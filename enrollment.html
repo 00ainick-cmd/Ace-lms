@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="CAET certification exam prep with interactive drills, flashcards, and mock exams. 233 questions across 8 avionics categories.">
+  <meta property="og:title" content="ACE Avionics Training — CAET Exam Prep">
+  <meta property="og:description" content="Interactive study platform for the Certified Aircraft Electronics Technician exam.">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="https://app.aceavionicstraining.com/shared/logo.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&amp;family=JetBrains+Mono:wght@400;500;600;700&amp;display=swap"
+    rel="stylesheet">
+  <title>ACE Avionics Training — Enrollment</title>
+  <link rel="icon" type="image/png" sizes="48x48" href="shared/ace-sprites/ace-48-happy.png">
+  <link rel="stylesheet" href="shared/ace-theme.css">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg);
+      font-family: var(--font-sans, system-ui, sans-serif);
+      padding: 1.5rem;
+    }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 2.5rem 2rem;
+      width: 100%;
+      max-width: 420px;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 2rem;
+    }
+    .logo img { width: 40px; height: 40px; }
+    .logo-text { font-size: 1.1rem; font-weight: 700; color: var(--text-primary); }
+    h1 { font-size: 1.5rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.5rem; }
+    .subtitle { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 2rem; line-height: 1.5; }
+    label { display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-muted);
+            text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.4rem; }
+    input {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      color: var(--text-primary);
+      font-size: 1rem;
+      margin-bottom: 1.25rem;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    input:focus { border-color: var(--blue); }
+    input#code { text-transform: uppercase; letter-spacing: 0.1em; font-family: monospace; font-size: 1.1rem; }
+    .btn {
+      width: 100%;
+      background: var(--blue);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 0.85rem;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.15s;
+    }
+    .btn:hover { opacity: 0.85; }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .error {
+      background: rgba(248, 113, 113, 0.1);
+      border: 1px solid var(--danger);
+      color: var(--danger);
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      font-size: 0.875rem;
+      margin-bottom: 1.25rem;
+      display: none;
+    }
+    .error.visible { display: block; }
+    .help {
+      text-align: center;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: 1.5rem;
+    }
+    .help a { color: var(--blue); text-decoration: none; }
+  </style>
+</head>
+<body>
+<div class="card">
+  <div class="logo">
+    <img src="shared/logo.png" alt="ACE">
+    <span class="logo-text">ACE Avionics Training</span>
+  </div>
+
+  <h1>Activate Your Access</h1>
+  <p class="subtitle">Enter your name and the access code from your purchase email to get started.</p>
+
+  <div class="error" id="errorMsg"></div>
+
+  <label for="name">Your Name</label>
+  <input type="text" id="name" placeholder="First Last" autocomplete="name">
+
+  <label for="code">Access Code</label>
+  <input type="text" id="code" placeholder="ACE-XXXX-XXXX" maxlength="12" autocomplete="off">
+
+  <button class="btn" id="submitBtn" onclick="activate()">Activate Access</button>
+
+  <p class="help">
+    Don't have a code? <a href="https://aceavionicstraining.com/enroll" target="_blank">Purchase access here</a><br>
+    Problems? <a href="mailto:nickb@aceavionicstraining.com">Contact support</a>
+  </p>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="shared/js/ace-auth.js"></script>
+<script>
+  // Auto-format code input: insert dashes as user types
+  document.getElementById('code').addEventListener('input', function(e) {
+    let val = e.target.value.replace(/[^A-Z0-9]/gi, '').toUpperCase().slice(0, 10)
+    if (val.length > 7) val = 'ACE-' + val.slice(3, 7) + '-' + val.slice(7)
+    else if (val.length > 3) val = 'ACE-' + val.slice(3)
+    else val = val
+    e.target.value = val
+  })
+
+  async function activate() {
+    const name = document.getElementById('name').value.trim()
+    const code = document.getElementById('code').value.trim().toUpperCase()
+    const errorEl = document.getElementById('errorMsg')
+    const btn = document.getElementById('submitBtn')
+
+    errorEl.classList.remove('visible')
+
+    if (!name) return showError('Please enter your name.')
+    if (code.length < 12) return showError('Please enter a complete access code (ACE-XXXX-XXXX).')
+
+    btn.disabled = true
+    btn.textContent = 'Activating\u2026'
+
+    const result = await AceAuth.activate(code, name)
+
+    if (result.success) {
+      const returnUrl = new URLSearchParams(window.location.search).get('return') || 'dashboard.html'; window.location.href = decodeURIComponent(returnUrl)
+    } else {
+      showError(result.error)
+      btn.disabled = false
+      btn.textContent = 'Activate Access'
+    }
+  }
+
+  function showError(msg) {
+    const el = document.getElementById('errorMsg')
+    el.textContent = msg
+    el.classList.add('visible')
+  }
+
+  // If already enrolled, go straight to dashboard
+  document.addEventListener('DOMContentLoaded', async () => {
+    const session = await AceAuth.getSession()
+    if (session) { const r = new URLSearchParams(window.location.search).get('return') || 'dashboard.html'; window.location.href = decodeURIComponent(r); }
+  })
+</script>
+</body>
+</html>
